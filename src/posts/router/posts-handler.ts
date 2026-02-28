@@ -81,7 +81,7 @@ export const postsHandler = {
         }
 
 
-        res.status(HttpStatus.NoContent)
+        res.sendStatus(HttpStatus.NoContent)
 
 
     }

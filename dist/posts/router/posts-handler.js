@@ -71,7 +71,7 @@ exports.postsHandler = {
                 res.sendStatus(statuses_1.HttpStatus.NotFound);
                 return;
             }
-            res.status(statuses_1.HttpStatus.NoContent);
+            res.sendStatus(statuses_1.HttpStatus.NoContent);
         });
     }
 };
