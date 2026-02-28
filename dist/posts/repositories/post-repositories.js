@@ -10,25 +10,33 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.postsRepository = void 0;
-const mongo_db_1 = require("../../db/mongo-db");
 const mongodb_1 = require("mongodb");
+const mongo_db_1 = require("../../db/mongo-db"); // Импортируем клиент
 const blog_repostitories_1 = require("../../blogs/repositories/blog-repostitories");
+// Функция для безопасного получения коллекции
+const getCollection = () => mongo_db_1.client.db().collection('posts');
 exports.postsRepository = {
     getAllPosts() {
         return __awaiter(this, void 0, void 0, function* () {
-            const posts = yield mongo_db_1.postCollection.find().toArray();
+            const posts = yield getCollection().find().toArray();
             return posts;
         });
     },
     getPostById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const post = yield mongo_db_1.postCollection.findOne({ _id: new Object(id) });
+            if (!mongodb_1.ObjectId.isValid(id))
+                return null;
+            // Исправил Object на ObjectId
+            const post = yield getCollection().findOne({ _id: new mongodb_1.ObjectId(id) });
             return post;
         });
     },
     createPost(data) {
         return __awaiter(this, void 0, void 0, function* () {
             const blog = yield blog_repostitories_1.blogsRepository.getBlogById(data.blogId);
+            // Важно: если блог не найден, пост создавать нельзя
+            if (!blog)
+                return null;
             const newPost = {
                 _id: new mongodb_1.ObjectId(),
                 title: data.title,
@@ -38,19 +46,30 @@ exports.postsRepository = {
                 blogName: blog.name,
                 createdAt: new Date().toISOString()
             };
-            yield mongo_db_1.postCollection.insertOne(newPost);
+            yield getCollection().insertOne(newPost);
             return newPost;
         });
     },
     updatePost(id, data) {
         return __awaiter(this, void 0, void 0, function* () {
-            const updatedPost = yield mongo_db_1.postCollection.updateOne({ _id: new mongodb_1.ObjectId(id) }, { $set: { title: data.title, shortDescription: data.shortDescription, content: data.content, blogId: data.blogId } });
-            return updatedPost.matchedCount === 1;
+            if (!mongodb_1.ObjectId.isValid(id))
+                return false;
+            const result = yield getCollection().updateOne({ _id: new mongodb_1.ObjectId(id) }, {
+                $set: {
+                    title: data.title,
+                    shortDescription: data.shortDescription,
+                    content: data.content,
+                    blogId: data.blogId
+                }
+            });
+            return result.matchedCount === 1;
         });
     },
     deletePost(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield mongo_db_1.postCollection.deleteOne({ _id: new mongodb_1.ObjectId(id) });
+            if (!mongodb_1.ObjectId.isValid(id))
+                return false;
+            const result = yield getCollection().deleteOne({ _id: new mongodb_1.ObjectId(id) });
             return result.deletedCount === 1;
         });
     }

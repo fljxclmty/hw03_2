@@ -11,17 +11,22 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.blogsRepository = void 0;
 const mongodb_1 = require("mongodb");
-const mongo_db_1 = require("../../db/mongo-db");
+const mongo_db_1 = require("../../db/mongo-db"); // Импортируем клиент, а не коллекцию
+// Вспомогательная функция для получения коллекции прямо в момент вызова
+const getCollection = () => mongo_db_1.client.db().collection('blogs');
 exports.blogsRepository = {
     getAllBlogs() {
         return __awaiter(this, void 0, void 0, function* () {
-            const blogs = yield mongo_db_1.blogCollection.find().toArray();
+            // Вызываем getCollection() внутри метода
+            const blogs = yield getCollection().find().toArray();
             return blogs;
         });
     },
     getBlogById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const blog = yield mongo_db_1.blogCollection.findOne({ _id: new mongodb_1.ObjectId(id) });
+            if (!mongodb_1.ObjectId.isValid(id))
+                return null; // Хорошая практика: проверка валидности ID
+            const blog = yield getCollection().findOne({ _id: new mongodb_1.ObjectId(id) });
             return blog;
         });
     },
@@ -35,19 +40,23 @@ exports.blogsRepository = {
                 createdAt: new Date().toISOString(),
                 isMembership: false
             };
-            yield mongo_db_1.blogCollection.insertOne(newBlog);
+            yield getCollection().insertOne(newBlog);
             return newBlog;
         });
     },
     updateBlog(id, data) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield mongo_db_1.blogCollection.updateOne({ _id: new mongodb_1.ObjectId(id) }, { $set: { name: data.name, description: data.description, websiteUrl: data.websiteUrl } });
+            if (!mongodb_1.ObjectId.isValid(id))
+                return false;
+            const result = yield getCollection().updateOne({ _id: new mongodb_1.ObjectId(id) }, { $set: { name: data.name, description: data.description, websiteUrl: data.websiteUrl } });
             return result.matchedCount === 1;
         });
     },
     deleteBlog(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield mongo_db_1.blogCollection.deleteOne({ _id: new mongodb_1.ObjectId(id) });
+            if (!mongodb_1.ObjectId.isValid(id))
+                return false;
+            const result = yield getCollection().deleteOne({ _id: new mongodb_1.ObjectId(id) });
             return result.deletedCount === 1;
         });
     }

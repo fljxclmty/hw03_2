@@ -9,23 +9,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.runDb = exports.postCollection = exports.blogCollection = void 0;
+exports.runDb = exports.client = void 0;
 const mongodb_1 = require("mongodb");
 const uri = process.env.MONGO_URL || 'mongodb://0.0.0.0:27017';
-const client = new mongodb_1.MongoClient(uri);
+exports.client = new mongodb_1.MongoClient(uri);
 function runDb() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            yield client.connect();
-            const db = client.db();
-            exports.blogCollection = db.collection('blogs');
-            exports.postCollection = db.collection('posts');
+            yield exports.client.connect();
+            // Проверяем соединение пингом
+            yield exports.client.db().command({ ping: 1 });
             console.log("✅ Connected to Mongo");
             return true;
         }
         catch (e) {
             console.error("❌ Mongo connection error", e);
-            yield client.close();
             return false;
         }
     });

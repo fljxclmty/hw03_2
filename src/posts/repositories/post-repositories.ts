@@ -1,26 +1,30 @@
-import {postCollection} from "../../db/mongo-db";
-import {PostDbModel, PostInputModel} from "../models/post-models";
-import {ObjectId} from "mongodb";
-import {blogsRepository} from "../../blogs/repositories/blog-repostitories";
+import { ObjectId } from "mongodb";
+import { client } from "../../db/mongo-db"; // Импортируем клиент
+import { PostDbModel, PostInputModel } from "../models/post-models";
+import { blogsRepository } from "../../blogs/repositories/blog-repostitories";
 
+// Функция для безопасного получения коллекции
+const getCollection = () => client.db().collection<PostDbModel>('posts');
 
 export const postsRepository = {
 
-    async getAllPosts () {
-        const posts = await postCollection.find().toArray()
-        return posts as PostDbModel[]
+    async getAllPosts(): Promise<PostDbModel[]> {
+        const posts = await getCollection().find().toArray();
+        return posts as PostDbModel[];
     },
 
-
-    async getPostById (id: string) {
-        const post = await postCollection.findOne({_id: new Object(id)})
-        return post as PostDbModel
+    async getPostById(id: string): Promise<PostDbModel | null> {
+        if (!ObjectId.isValid(id)) return null;
+        // Исправил Object на ObjectId
+        const post = await getCollection().findOne({ _id: new ObjectId(id) });
+        return post as PostDbModel;
     },
 
+    async createPost(data: PostInputModel): Promise<PostDbModel | null> {
+        const blog = await blogsRepository.getBlogById(data.blogId);
 
-    async createPost (data: PostInputModel) {
-
-        const blog = await blogsRepository.getBlogById(data.blogId)
+        // Важно: если блог не найден, пост создавать нельзя
+        if (!blog) return null;
 
         const newPost: PostDbModel = {
             _id: new ObjectId(),
@@ -30,28 +34,33 @@ export const postsRepository = {
             blogId: data.blogId,
             blogName: blog.name,
             createdAt: new Date().toISOString()
-        }
+        };
 
-        await postCollection.insertOne(newPost);
-        return newPost
-
+        await getCollection().insertOne(newPost);
+        return newPost;
     },
 
+    async updatePost(id: string, data: PostInputModel): Promise<boolean> {
+        if (!ObjectId.isValid(id)) return false;
 
-    async updatePost (id: string, data: PostInputModel) {
-
-        const updatedPost = await postCollection.updateOne({_id: new ObjectId(id)}, {$set: {title: data.title, shortDescription: data.shortDescription, content: data.content, blogId: data.blogId}})
-        return updatedPost.matchedCount === 1
+        const result = await getCollection().updateOne(
+            { _id: new ObjectId(id) },
+            {
+                $set: {
+                    title: data.title,
+                    shortDescription: data.shortDescription,
+                    content: data.content,
+                    blogId: data.blogId
+                }
+            }
+        );
+        return result.matchedCount === 1;
     },
 
+    async deletePost(id: string): Promise<boolean> {
+        if (!ObjectId.isValid(id)) return false;
 
-    async deletePost (id: string) {
-
-        const result = await postCollection.deleteOne({_id: new ObjectId(id)})
-        return result.deletedCount === 1
+        const result = await getCollection().deleteOne({ _id: new ObjectId(id) });
+        return result.deletedCount === 1;
     }
-
-
-
-
-}
+};

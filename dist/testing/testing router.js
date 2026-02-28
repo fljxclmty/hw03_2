@@ -11,11 +11,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.testingRouter = void 0;
 const express_1 = require("express");
-const mongo_db_1 = require("../db/mongo-db");
 const statuses_1 = require("../core/statuses");
+const mongo_db_1 = require("../db/mongo-db"); // Импортируем клиент
 exports.testingRouter = (0, express_1.Router)();
 exports.testingRouter.delete('/all-data', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    yield mongo_db_1.blogCollection.deleteMany();
-    yield mongo_db_1.postCollection.deleteMany();
-    res.sendStatus(statuses_1.HttpStatus.NoContent);
+    try {
+        // Получаем доступ к базе и коллекциям напрямую через клиент
+        const db = mongo_db_1.client.db();
+        yield db.collection('blogs').deleteMany({});
+        yield db.collection('posts').deleteMany({});
+        res.sendStatus(statuses_1.HttpStatus.NoContent);
+    }
+    catch (e) {
+        console.error("❌ Error during data deletion:", e);
+        res.sendStatus(500); // На всякий случай, если база не ответит
+    }
 }));
