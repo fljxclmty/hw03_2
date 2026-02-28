@@ -41,11 +41,19 @@ export const postsHandler = {
 
 
     async create(req: any, res: any) {
+        const newPost: PostDbModel | null = await postsRepository.createPost(req.body);
 
-        const newPost = await postsRepository.createPost(req.body)
-        res.status(HttpStatus.Created).send(newPost)
+        // 1. Сначала проверяем на null
+        if (!newPost) {
+            // Если пост не создался (например, указан неверный blogId), возвращаем 404
+            res.sendStatus(HttpStatus.NotFound);
+            return;
+        }
+
+        // 2. Теперь TypeScript знает, что newPost — это точно PostDbModel (не null)
+        // и позволит прогнать его через маппер
+        res.status(HttpStatus.Created).send(postMapper(newPost));
     },
-
 
     async update(req: any, res: any) {
 
@@ -69,6 +77,7 @@ export const postsHandler = {
 
         if (!isDeleted) {
             res.sendStatus(HttpStatus.NotFound)
+            return
         }
 
 

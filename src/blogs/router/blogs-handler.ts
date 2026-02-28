@@ -50,8 +50,10 @@ export const blogsHandler = {
         const updatedBlog = await blogsRepository.updateBlog(req.params.id, req.body)
         if (!updatedBlog) {
             res.sendStatus(HttpStatus.NotFound)
+            return
         } else {
             res.sendStatus(HttpStatus.NoContent)
+            return
         }
     },
 
@@ -61,8 +63,10 @@ export const blogsHandler = {
         const deletedBlog = await blogsRepository.deleteBlog(req.params.id)
         if (!deletedBlog) {
             res.sendStatus(HttpStatus.NotFound)
+            return
         } else {
             res.sendStatus(HttpStatus.NoContent)
+            return
         }
 
     }

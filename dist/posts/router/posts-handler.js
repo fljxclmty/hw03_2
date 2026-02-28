@@ -43,7 +43,15 @@ exports.postsHandler = {
     create(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const newPost = yield post_repositories_1.postsRepository.createPost(req.body);
-            res.status(statuses_1.HttpStatus.Created).send(newPost);
+            // 1. Сначала проверяем на null
+            if (!newPost) {
+                // Если пост не создался (например, указан неверный blogId), возвращаем 404
+                res.sendStatus(statuses_1.HttpStatus.NotFound);
+                return;
+            }
+            // 2. Теперь TypeScript знает, что newPost — это точно PostDbModel (не null)
+            // и позволит прогнать его через маппер
+            res.status(statuses_1.HttpStatus.Created).send(postMapper(newPost));
         });
     },
     update(req, res) {
@@ -61,6 +69,7 @@ exports.postsHandler = {
             const isDeleted = yield post_repositories_1.postsRepository.deletePost(req.params.id);
             if (!isDeleted) {
                 res.sendStatus(statuses_1.HttpStatus.NotFound);
+                return;
             }
             res.status(statuses_1.HttpStatus.NoContent);
         });

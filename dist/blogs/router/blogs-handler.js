@@ -50,9 +50,11 @@ exports.blogsHandler = {
             const updatedBlog = yield blog_repostitories_1.blogsRepository.updateBlog(req.params.id, req.body);
             if (!updatedBlog) {
                 res.sendStatus(statuses_1.HttpStatus.NotFound);
+                return;
             }
             else {
                 res.sendStatus(statuses_1.HttpStatus.NoContent);
+                return;
             }
         });
     },
@@ -61,9 +63,11 @@ exports.blogsHandler = {
             const deletedBlog = yield blog_repostitories_1.blogsRepository.deleteBlog(req.params.id);
             if (!deletedBlog) {
                 res.sendStatus(statuses_1.HttpStatus.NotFound);
+                return;
             }
             else {
                 res.sendStatus(statuses_1.HttpStatus.NoContent);
+                return;
             }
         });
     }
