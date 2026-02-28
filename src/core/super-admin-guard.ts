@@ -1,11 +1,11 @@
-import {Request, Response, NextFunction} from "express";
+
 import {HttpStatus} from "./statuses";
 
 
 
 
 
-export const superAdminGuardMiddleware = (req: Request, res: Response, next: NextFunction) => {
+export const superAdminGuardMiddleware = (req: any, res: any, next: any) => {
 
     const auth = req.headers['authorization'] as string;
     if (!auth) {

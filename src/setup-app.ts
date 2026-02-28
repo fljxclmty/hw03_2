@@ -8,7 +8,7 @@ import { testingRouter } from "./testing/testing router";
 export const setupApp = (app: any) => { // Тут тоже Application
     app.use(express.json())
 
-    app.get('/', (req: Request, res: Response) => {
+    app.get('/', (req: any, res: any) => {
         res.status(HttpStatus.OK).send('Hello World!!!')
     })
 

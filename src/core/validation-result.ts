@@ -16,7 +16,7 @@ export interface APIErrorResult {
 
 
 
-export const inputValidationResultMiddleware = (req: any, res: any, next: NextFunction)=> {
+export const inputValidationResultMiddleware = (req: any, res: any, next: any)=> {
     const result = validationResult(req);
 
     if (!result.isEmpty()) {
