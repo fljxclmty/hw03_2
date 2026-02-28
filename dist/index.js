@@ -12,10 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importDefault(require("express")); // Используем Application
 const setup_app_1 = require("./setup-app");
 const mongo_db_1 = require("./db/mongo-db");
 const dotenv_1 = __importDefault(require("dotenv"));
+const express_1 = __importDefault(require("express"));
 dotenv_1.default.config();
 // Создаем app ВНЕ асинхронной функции, чтобы его можно было экспортировать
 const app = (0, express_1.default)();

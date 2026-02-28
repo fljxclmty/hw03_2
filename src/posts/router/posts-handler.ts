@@ -20,14 +20,14 @@ const postMapper = (post: PostDbModel): PostViewModel => {
 
 export const postsHandler = {
 
-    async getAll(req: Request, res: Response) {
+    async getAll(req: any, res: any) {
 
         const posts = await postsRepository.getAllPosts()
         res.status(HttpStatus.OK).send(posts.map(postMapper))
     },
 
 
-    async getById(req: Request, res: Response) {
+    async getById(req: any, res: any) {
 
         const post = await postsRepository.getPostById(req.params.id)
 
@@ -40,14 +40,14 @@ export const postsHandler = {
     },
 
 
-    async create(req: Request, res: Response) {
+    async create(req: any, res: any) {
 
         const newPost = await postsRepository.createPost(req.body)
         res.status(HttpStatus.Created).send(newPost)
     },
 
 
-    async update(req: Request, res: Response) {
+    async update(req: any, res: any) {
 
         const updatedPost = await postsRepository.updatePost(req.params.id, req.body)
 
@@ -62,7 +62,7 @@ export const postsHandler = {
     },
 
 
-    async delete(req: Request, res: Response) {
+    async delete(req: any, res: any) {
 
 
         const isDeleted = await postsRepository.deletePost(req.params.id)

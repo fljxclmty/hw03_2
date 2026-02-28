@@ -18,14 +18,14 @@ const blogMapper = (blog: BlogDbModel): BlogViewModel => {
 
 export const blogsHandler = {
 
-    async getAll(req: Request, res: Response) {
+    async getAll(req: any, res: any) {
 
         const blogs = await blogsRepository.getAllBlogs();
         res.status(HttpStatus.OK).send(blogs.map(blogMapper))
     },
 
 
-    async getById(req: Request, res: Response) {
+    async getById(req: any, res: any) {
 
         const blog = await blogsRepository.getBlogById(req.params.id)
         if (!blog) {
@@ -38,14 +38,14 @@ export const blogsHandler = {
     },
 
 
-    async create(req: Request, res: Response) {
+    async create(req: any, res: any) {
 
         const newBlog = await blogsRepository.createBlog(req.body)
         res.status(HttpStatus.Created).send(blogMapper(newBlog))
     },
 
 
-    async update(req: Request, res: Response) {
+    async update(req: any, res: any) {
 
         const updatedBlog = await blogsRepository.updateBlog(req.params.id, req.body)
         if (!updatedBlog) {
@@ -56,7 +56,7 @@ export const blogsHandler = {
     },
 
 
-    async delete(req: Request, res: Response) {
+    async delete(req: any, res: any) {
 
         const deletedBlog = await blogsRepository.deleteBlog(req.params.id)
         if (!deletedBlog) {

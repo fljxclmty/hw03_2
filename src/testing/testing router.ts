@@ -7,7 +7,7 @@ export const testingRouter = Router();
 
 
 
-testingRouter.delete('/all-data', async (req: Request, res: Response)=> {
+testingRouter.delete('/all-data', async (req: any, res: any)=> {
 
     await blogCollection.deleteMany();
     await postCollection.deleteMany()
