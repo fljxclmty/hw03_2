@@ -1,11 +1,11 @@
-import express, { Application, Request, Response } from "express"; // Заменили Express на Application
+import express, {Request, Response } from "express"; // Заменили Express на Application
 import { HttpStatus } from "./core/statuses";
 import { BLOG_PATHS, POST_PATHS, TESTING_PATHS } from "./core/paths";
 import { blogsRouter } from "./blogs/router/blogs-router";
 import { postsRouter } from "./posts/router/posts-router";
 import { testingRouter } from "./testing/testing router";
 
-export const setupApp = (app: Application) => { // Тут тоже Application
+export const setupApp = (app: any) => { // Тут тоже Application
     app.use(express.json())
 
     app.get('/', (req: Request, res: Response) => {

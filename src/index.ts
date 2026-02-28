@@ -1,12 +1,13 @@
-import express, { Application } from "express"; // Используем Application
+
 import { setupApp } from "./setup-app";
 import { runDb } from "./db/mongo-db";
 import dotenv from 'dotenv';
+import express from "express";
 
 dotenv.config();
 
 // Создаем app ВНЕ асинхронной функции, чтобы его можно было экспортировать
-const app: Application = express();
+const app: any = express();
 setupApp(app);
 
 const startApp = async () => {
