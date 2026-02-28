@@ -12,18 +12,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importDefault(require("express"));
+const express_1 = __importDefault(require("express")); // Используем Application
 const setup_app_1 = require("./setup-app");
 const mongo_db_1 = require("./db/mongo-db");
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
+// Создаем app ВНЕ асинхронной функции, чтобы его можно было экспортировать
+const app = (0, express_1.default)();
+(0, setup_app_1.setupApp)(app);
 const startApp = () => __awaiter(void 0, void 0, void 0, function* () {
-    const app = (0, express_1.default)();
-    (0, setup_app_1.setupApp)(app);
     yield (0, mongo_db_1.runDb)();
-    app.listen(process.env.PORT || 3003, () => {
-        console.log(`Example app listening on port ${process.env.PORT || 3003}`);
-    });
-    return app;
+    // Vercel сам решит, на каком порту слушать, но для локальной разработки оставляем
+    if (process.env.NODE_ENV !== 'test') {
+        app.listen(process.env.PORT || 3003, () => {
+            console.log(`Server is running on port ${process.env.PORT || 3003}`);
+        });
+    }
 });
 startApp().catch(console.dir);
+// ОБЯЗАТЕЛЬНО для Vercel
+exports.default = app;
