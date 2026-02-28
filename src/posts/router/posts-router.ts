@@ -13,10 +13,10 @@ postsRouter.get('/', postsHandler.getAll);
 
 postsRouter.get('/:id', idValidation, inputValidationResultMiddleware, postsHandler.getById);
 
-postsRouter.post('/', superAdminGuardMiddleware, postInputValidation, postsHandler.create);
+postsRouter.post('/', superAdminGuardMiddleware, postInputValidation, inputValidationResultMiddleware, postsHandler.create);
 
-postsRouter.put('/:id', superAdminGuardMiddleware, idValidation, postInputValidation, postsHandler.update);
+postsRouter.put('/:id', superAdminGuardMiddleware, idValidation, postInputValidation, inputValidationResultMiddleware, postsHandler.update);
 
-postsRouter.delete('/:id', superAdminGuardMiddleware, idValidation, postsHandler.delete)
+postsRouter.delete('/:id', superAdminGuardMiddleware, idValidation, inputValidationResultMiddleware, postsHandler.delete)
 
 

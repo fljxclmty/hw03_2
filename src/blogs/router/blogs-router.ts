@@ -13,7 +13,7 @@ blogsRouter.get("/", blogsHandler.getAll);
 
 blogsRouter.get("/:id", idValidation, inputValidationResultMiddleware, blogsHandler.getById);
 
-blogsRouter.post("/", superAdminGuardMiddleware, blogInputValidation, blogsHandler.create);
+blogsRouter.post("/", superAdminGuardMiddleware, blogInputValidation, inputValidationResultMiddleware, blogsHandler.create);
 
 blogsRouter.put("/:id", superAdminGuardMiddleware, idValidation, blogInputValidation, inputValidationResultMiddleware, blogsHandler.update);
 
