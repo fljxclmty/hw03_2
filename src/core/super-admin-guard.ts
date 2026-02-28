@@ -6,27 +6,26 @@ import {HttpStatus} from "./statuses";
 
 
 export const superAdminGuardMiddleware = (req: any, res: any, next: any) => {
-
-    const auth = req.headers['authorization'] as string;
+    const auth = req.headers['authorization'];
     if (!auth) {
-        res.sendStatus(HttpStatus.Unauthorized)
-        return
+        return res.sendStatus(HttpStatus.Unauthorized);
     }
 
     const [authType, token] = auth.split(' ');
-    if (authType !== 'Basic') {
-        res.sendStatus(HttpStatus.Unauthorized)
-        return;
+    if (authType !== 'Basic' || !token) {
+        return res.sendStatus(HttpStatus.Unauthorized);
     }
 
     const credentials = Buffer.from(token, 'base64').toString('utf-8');
     const [username, password] = credentials.split(':');
 
+    // Берем значения из ENV или используем дефолты
+    const expectedUsername = process.env.ADMIN_USERNAME || 'admin';
+    const expectedPassword = process.env.ADMIN_PASSWORD || 'qwerty'; // Исправил на заглавную P
 
-    if ((username !== process.env.ADMIN_USERNAME || 'admin') || (password !== process.env.ADMIN_password || 'qwerty')) {
-        res.sendStatus(HttpStatus.Unauthorized)
-        return;
+    if (username !== expectedUsername || password !== expectedPassword) {
+        return res.sendStatus(HttpStatus.Unauthorized);
     }
 
-    next()
-}
+    next();
+};
