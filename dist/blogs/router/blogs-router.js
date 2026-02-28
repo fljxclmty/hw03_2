@@ -1,0 +1,15 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.blogsRouter = void 0;
+const express_1 = require("express");
+const blogs_handler_1 = require("./blogs-handler");
+const id_validation_1 = require("../../core/id-validation");
+const validation_result_1 = require("../../core/validation-result");
+const super_admin_guard_1 = require("../../core/super-admin-guard");
+const blog_input_validation_1 = require("../validation/blog-input-validation");
+exports.blogsRouter = (0, express_1.Router)();
+exports.blogsRouter.get("/", blogs_handler_1.blogsHandler.getAll);
+exports.blogsRouter.get("/:id", id_validation_1.idValidation, validation_result_1.inputValidationResultMiddleware, blogs_handler_1.blogsHandler.getById);
+exports.blogsRouter.post("/", super_admin_guard_1.superAdminGuardMiddleware, blog_input_validation_1.blogInputValidation, blogs_handler_1.blogsHandler.create);
+exports.blogsRouter.put("/:id", super_admin_guard_1.superAdminGuardMiddleware, id_validation_1.idValidation, blog_input_validation_1.blogInputValidation, validation_result_1.inputValidationResultMiddleware, blogs_handler_1.blogsHandler.update);
+exports.blogsRouter.delete("/:id", super_admin_guard_1.superAdminGuardMiddleware, id_validation_1.idValidation, validation_result_1.inputValidationResultMiddleware, blogs_handler_1.blogsHandler.delete);

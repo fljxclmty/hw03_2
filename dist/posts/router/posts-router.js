@@ -1,0 +1,15 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.postsRouter = void 0;
+const express_1 = require("express");
+const posts_handler_1 = require("./posts-handler");
+const id_validation_1 = require("../../core/id-validation");
+const validation_result_1 = require("../../core/validation-result");
+const super_admin_guard_1 = require("../../core/super-admin-guard");
+const post_input_validation_1 = require("../validation/post-input-validation");
+exports.postsRouter = (0, express_1.Router)();
+exports.postsRouter.get('/', posts_handler_1.postsHandler.getAll);
+exports.postsRouter.get('/:id', id_validation_1.idValidation, validation_result_1.inputValidationResultMiddleware, posts_handler_1.postsHandler.getById);
+exports.postsRouter.post('/', super_admin_guard_1.superAdminGuardMiddleware, post_input_validation_1.postInputValidation, posts_handler_1.postsHandler.create);
+exports.postsRouter.put('/:id', super_admin_guard_1.superAdminGuardMiddleware, id_validation_1.idValidation, post_input_validation_1.postInputValidation, posts_handler_1.postsHandler.update);
+exports.postsRouter.delete('/:id', super_admin_guard_1.superAdminGuardMiddleware, id_validation_1.idValidation, posts_handler_1.postsHandler.delete);
